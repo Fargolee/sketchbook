@@ -404,6 +404,13 @@ button{font:inherit}
   .bloom{width:170px;justify-self:center}
 }
 
+.contact{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+.contact-social{
+  margin:20px 0 0;display:flex;flex-wrap:wrap;gap:22px;
+  font-size:12px;letter-spacing:var(--track-caps);text-transform:uppercase;
+}
+.about .bio + .bio{margin-top:1.1em}
+
 .plates{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
 .plate-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--hairline)}
 .plate{
@@ -419,7 +426,7 @@ button{font:inherit}
 .plate[aria-current="true"] .p{color:var(--earth)}
 
 .foot{font-size:11.5px;letter-spacing:var(--track-caps);text-transform:uppercase;
-  color:var(--ink-faint);text-align:center;padding-bottom:44px}
+  color:var(--ink-faint);text-align:center;margin-top:clamp(48px,7vh,84px);padding-bottom:44px}
 </style>
 </head>
 <body>
@@ -433,10 +440,10 @@ button{font:inherit}
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
       <div class="top-socials">
-        <a href="#" class="icon-btn" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.7 2.6h3.3l-7.2 8.2 8.5 11.2h-6.7l-5.2-6.9-6 6.9H1.1l7.7-8.8L.7 2.6h6.9l4.7 6.3 5.4-6.3Zm-1.2 17.5h1.8L7.6 4.4H5.7l10.8 15.7Z"/></svg></a>
-        <a href="#" class="icon-btn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.9 3.5a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2ZM3.1 9.3h3.6v11.6H3.1V9.3Zm6 0h3.4v1.6h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.45h-3.6v-5.72c0-1.36-.02-3.12-1.92-3.12-1.92 0-2.22 1.48-2.22 3.02v5.82H9.1V9.3Z"/></svg></a>
-        <a href="#" class="icon-btn" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.15" fill="currentColor" stroke="none"/></svg></a>
-        <a href="#contact" class="icon-btn" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.4" y="4.6" width="19.2" height="14.8" rx="2.4"/><path d="m3.2 6.4 8.8 6.6 8.8-6.6"/></svg></a>
+        <a href="https://x.com/MengTo" target="_blank" rel="me noopener" class="icon-btn" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.7 2.6h3.3l-7.2 8.2 8.5 11.2h-6.7l-5.2-6.9-6 6.9H1.1l7.7-8.8L.7 2.6h6.9l4.7 6.3 5.4-6.3Zm-1.2 17.5h1.8L7.6 4.4H5.7l10.8 15.7Z"/></svg></a>
+        <a href="https://www.linkedin.com/in/mengto" target="_blank" rel="me noopener" class="icon-btn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.9 3.5a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2ZM3.1 9.3h3.6v11.6H3.1V9.3Zm6 0h3.4v1.6h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.45h-3.6v-5.72c0-1.36-.02-3.12-1.92-3.12-1.92 0-2.22 1.48-2.22 3.02v5.82H9.1V9.3Z"/></svg></a>
+        <a href="https://www.instagram.com/mengto" target="_blank" rel="me noopener" class="icon-btn" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.15" fill="currentColor" stroke="none"/></svg></a>
+        <a href="mailto:meng@designcode.io" class="icon-btn" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.4" y="4.6" width="19.2" height="14.8" rx="2.4"/><path d="m3.2 6.4 8.8 6.6 8.8-6.6"/></svg></a>
       </div>
     </nav>
   </header>
@@ -494,7 +501,8 @@ button{font:inherit}
   <section id="about" class="about">
     <div>
       <p class="section-label">About</p>
-      <p class="bio">Meng To is a designer, creator, and AI educator based in Singapore. He is the founder of <a class="bio-link" href="#">Design+Code</a>, where for over a decade he has taught designers and developers to build real apps — from Sketch and Xcode through SwiftUI, and now the AI tools that let one person ship what used to take a team. His work lives on the seam between craft and code: teaching designers to build, and builders to see. This sketchbook is the other half of that — the city looked at slowly, in <a class="bio-link" href="#">ink and a little colour</a>: shophouse shutters, hawker tents, the bay at dusk.</p>
+      <p class="bio">Meng To is a designer and teacher in Singapore. He founded <a class="bio-link" href="https://designcode.io" target="_blank" rel="noopener">Design+Code</a>, where he teaches designers code and developers design, and builds <a class="bio-link" href="https://aura.build" target="_blank" rel="noopener">Aura</a> and <a class="bio-link" href="https://dreamcut.ai" target="_blank" rel="noopener">DreamCut</a>.</p>
+      <p class="bio">This sketchbook is the slower half of that. The city looked at properly, in ink and a little colour: shophouse shutters, hawker tents, the bay at dusk.</p>
     </div>
     <img class="bloom" src="sketchbook/bloom.png" alt="" aria-hidden="true">
   </section>
@@ -507,7 +515,18 @@ button{font:inherit}
   </section>
 
   <div class="rule short" aria-hidden="true"></div>
-  <p class="foot" id="contact">Singapore · Sketchbook · <a href="#" class="bio-link">hello@mengto.com</a></p>
+
+  <section id="contact" class="contact">
+    <p class="section-label">Contact</p>
+    <p class="bio">Write to me at <a class="bio-link" href="mailto:meng@designcode.io">meng@designcode.io</a>. I read everything, and I answer most of it.</p>
+    <p class="contact-social">
+      <a class="bio-link" href="https://x.com/MengTo" target="_blank" rel="me noopener">X</a>
+      <a class="bio-link" href="https://www.linkedin.com/in/mengto" target="_blank" rel="me noopener">LinkedIn</a>
+      <a class="bio-link" href="https://www.instagram.com/mengto" target="_blank" rel="me noopener">Instagram</a>
+    </p>
+  </section>
+
+  <p class="foot">Singapore · Sketchbook</p>
 </main>
 
 <script>
