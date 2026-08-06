@@ -57,7 +57,6 @@ GitHub Pages builds from `main` through [the Actions workflow](.github/workflows
 - **[Skills](https://github.com/MengTo/Skills)** — agent skills for designers and builders using Codex, Claude, Cursor and other AI coding agents. Browse them at [ui-skills.com](https://ui-skills.com).
 - **[The Complete Shelf](https://github.com/MengTo/complete-shelf)** — seven interactive clothbound hardcovers in a single Three.js file. [Live](https://mengto.github.io/complete-shelf/)
 - **[A Long-Expected Party](https://github.com/MengTo/a-long-expected-party)** — a procedural short film rendered live in the browser, with a Higgsfield-generated score and narration. [Live](https://mengto.github.io/a-long-expected-party/)
-- **[Angle](https://github.com/MengTo/Angle-Sketch-Plugin)** — a free Sketch plugin for perspective mockups.
 
 ## What I build
 
