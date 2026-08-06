@@ -52,6 +52,20 @@ The magnifier is hidden on touch devices, where there is no cursor to drag it wi
 
 GitHub Pages builds from `main` through [the Actions workflow](.github/workflows/pages.yml) and serves at [mengto.com](https://mengto.com).
 
+## More open source
+
+- **[Skills](https://github.com/MengTo/Skills)** — agent skills for designers and builders using Codex, Claude, Cursor and other AI coding agents. Browse them at [ui-skills.com](https://ui-skills.com).
+- **[The Complete Shelf](https://github.com/MengTo/complete-shelf)** — seven interactive clothbound hardcovers in a single Three.js file. [Live](https://mengto.github.io/complete-shelf/)
+- **[A Long-Expected Party](https://github.com/MengTo/a-long-expected-party)** — a procedural short film rendered live in the browser, with a Higgsfield-generated score and narration. [Live](https://mengto.github.io/a-long-expected-party/)
+- **[Spring](https://github.com/MengTo/Spring)** — a library to simplify iOS animations in Swift.
+- **[Angle](https://github.com/MengTo/Angle-Sketch-Plugin)** — a free Sketch plugin for perspective mockups.
+
+## What I build
+
+- **[Aura](https://aura.build)** — an AI website builder that creates landing pages in seconds and exports to HTML and Figma.
+- **[Design+Code](https://designcode.io)** — learn to design and code React and Swift apps.
+- **[DreamCut](https://dreamcut.ai)** — an AI video editor and screen recorder.
+
 ## Credits
 
 - Concept and original open source: [Matthew Yu](https://github.com/matthewyuart/personalportfolio)
