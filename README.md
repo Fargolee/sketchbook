@@ -52,12 +52,12 @@ python tools/admin.py --lan      # 局域网可访问，见「远程访问」
 
 ## 远程访问
 
-管理服务默认只监听本机（127.0.0.1），别的设备连不上——管理接口能改能删，不建议裸奔到不可信网络：
+管理服务默认只监听本机（127.0.0.1），别的设备连不上——管理接口能改能删，不建议裸奔到不可信网络。**口令验证始终开启**：没给 `--password` 时会自动生成一个并存到根目录 `.adminpass`（该文件已 gitignore，不会发布），之后每次启动沿用；口令在启动服务的命令行窗口里可见，管理页首次进入时输入一次即可。
 
 ```sh
-python tools/admin.py                        # 默认：仅本机
+python tools/admin.py                        # 默认：仅本机，口令自动生成
 python tools/admin.py --lan                  # 局域网可访问（手机/其他电脑）
-python tools/admin.py --lan --password 口令   # 局域网 + 写接口需口令
+python tools/admin.py --lan --password 口令   # 局域网 + 固定口令
 python tools/admin.py 5000                   # 换端口
 ```
 

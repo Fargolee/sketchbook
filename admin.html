@@ -57,6 +57,18 @@ header p{margin:0;font-size:14px;line-height:1.7;color:var(--ink-soft);max-width
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46%}
 .card.dirty{border-color:rgba(154,106,62,.55)}
 .card.dirty .fname:after{content:" · 未保存";color:var(--earth)}
+#login{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(43,39,33,.35);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:500}
+#login.on{display:flex}
+.logincard{width:min(340px,86vw);background:var(--card);border:1px solid var(--hairline);
+  border-radius:12px;padding:24px 22px 18px;text-align:center;box-shadow:0 18px 40px rgba(58,44,26,.18)}
+.logincard h2{margin:0 0 6px;font-size:20px;font-weight:400}
+.logincard p{margin:0 0 14px;font-size:13px;color:var(--ink-soft);line-height:1.6}
+.logincard input{width:100%;font:inherit;font-size:15px;padding:8px 11px;border-radius:8px;
+  border:1px solid var(--hairline);background:#fffdf6;color:var(--ink);text-align:center;letter-spacing:.12em}
+.logincard input:focus{outline:1px solid rgba(154,106,62,.5)}
+.logincard .err{display:none;color:#9e3b2c;margin:10px 0 0;font-size:12.5px}
+.logincard button{margin-top:12px;width:100%}
 #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);
   background:var(--ink);color:var(--paper);font-size:13.5px;padding:10px 20px;border-radius:999px;
   opacity:0;transition:.3s ease;pointer-events:none;max-width:82vw}
@@ -95,6 +107,15 @@ footer{max-width:1200px;margin:0 auto;padding:0 24px 60px;font-size:12.5px;color
   文件名自动生成，无需填写。输出分辨率只作用于新合成的卡片；本次会话里上传过原图的卡片会按
   新分辨率重新合成，之前已保存的旧页想升级清晰度，重新拖一次原图再写入即可。
 </footer>
+<div id="login">
+  <form id="loginForm" class="logincard" autocomplete="off">
+    <h2>藏品管理 · 口令</h2>
+    <p>这本册子的管理口令在启动服务的命令行窗口里可见</p>
+    <input type="password" id="passInput" placeholder="管理口令">
+    <p class="err" id="loginErr">口令不对，再试一次。</p>
+    <button class="btn primary" type="submit">进入</button>
+  </form>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -119,9 +140,35 @@ function toast(msg){
   t.textContent=msg;t.classList.add('on');
   clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600);
 }
+let loginResolve=null;
+(function(){
+  document.getElementById('loginForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const v=document.getElementById('passInput').value.trim();
+    if(!v)return;
+    localStorage.setItem('sb-pass',v);
+    document.getElementById('login').classList.remove('on');
+    document.getElementById('loginErr').style.display='none';
+    if(loginResolve){const r=loginResolve;loginResolve=null;r();}
+  });
+})();
+function showLogin(showError){       /* 401 时弹出；返回在点击「进入」后兑现 */
+  return new Promise(res=>{
+    loginResolve=res;
+    document.getElementById('loginErr').style.display=showError?'block':'none';
+    document.getElementById('login').classList.add('on');
+    const inp=document.getElementById('passInput');
+    inp.value='';setTimeout(()=>inp.focus(),60);
+  });
+}
+function apiGet(){
+  return fetch('/api/pages',{cache:'no-store',
+    headers:{'X-Admin-Token':localStorage.getItem('sb-pass')||''}});
+}
 async function load(){
   try{
-    const r=await fetch('/api/pages',{cache:'no-store'});
+    let r=await apiGet(),tried=false;
+    while(r.status===401){await showLogin(tried);tried=true;r=await apiGet();}
     const d=await r.json();
     if(d.error)throw new Error(d.error);
     slots=d.pages.map(p=>({file:p.file,title:p.title,place:p.place,mode:'full',
@@ -399,12 +446,7 @@ saveBtn.onclick=async()=>{
       body:JSON.stringify({pages})
     });
     let r=await send(localStorage.getItem('sb-pass'));
-    if(r.status===401){                 /* 服务设了口令：问一次，记住后重试 */
-      const pass=prompt('这个服务设置了管理口令，请输入：');
-      if(pass===null)throw new Error('需要管理口令');
-      localStorage.setItem('sb-pass',pass);
-      r=await send(pass);
-    }
+    while(r.status===401){await showLogin(true);r=await send(localStorage.getItem('sb-pass'));}
     const d=await r.json();
     if(d.error)throw new Error(d.error);
     const prev=slots;

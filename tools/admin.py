@@ -4,19 +4,22 @@
     python tools/admin.py                       # 仅本机访问（默认，最安全）
     python tools/admin.py --open                # 启动后自动打开浏览器
     python tools/admin.py --lan                 # 局域网内可访问（手机/其他电脑）
-    python tools/admin.py --lan --password 口令  # 局域网 + 写接口要口令
+    python tools/admin.py --lan --password 口令  # 固定口令
     python tools/admin.py 5000                  # 换端口
 
-管理页在 /admin.html。写接口 /api/pages 在设了口令后要求请求头
-X-Admin-Token 与口令一致。默认只监听 127.0.0.1；--lan 也只建议在
-可信的家里 Wi-Fi 用，公网暴露请配合 Tailscale 这类私有隧道。
+口令验证永远开启：--password 指定固定口令；不给就自动生成一个，存到
+根目录 .adminpass（已 gitignore，不会发布），之后每次启动沿用。
+管理页 /admin.html 与读写接口 /api/pages 都要验这个口令。
+--lan 只建议在可信的家里 Wi-Fi 用，公网暴露请配合 Tailscale 这类私有隧道。
 """
 import base64
 import io
 import json
 import os
 import re
+import secrets
 import socket
+import string
 import sys
 import threading
 import webbrowser
@@ -129,6 +132,9 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == "/api/pages":
+            if self.headers.get("X-Admin-Token") != PASSWORD:
+                self._json('{"error":"管理口令不对"}'.encode("utf-8"), 401)
+                return
             try:
                 self._json(json.dumps({"pages": read_pages()}, ensure_ascii=False).encode("utf-8"))
             except Exception as e:
@@ -180,10 +186,22 @@ if __name__ == "__main__":
         args.remove("--lan")
         host = "0.0.0.0"
     password = None
+    pass_source = ""
     if "--password" in args:
         i = args.index("--password")
         password = args[i + 1]
         del args[i:i + 2]
+        pass_source = "命令行 --password"
+    if not password:  # 没给固定口令：沿用 .adminpass，或生成一个存进去
+        pf = ROOT / ".adminpass"
+        if pf.exists():
+            password = pf.read_text(encoding="utf-8").strip()
+            pass_source = "沿用 .adminpass 里保存的"
+        else:
+            alphabet = string.ascii_lowercase + string.digits
+            password = "".join(secrets.choice(alphabet) for _ in range(8))
+            pf.write_text(password, encoding="utf-8")
+            pass_source = "自动生成，已保存到 .adminpass"
     open_page = "--open" in args
     if open_page:
         args.remove("--open")
@@ -196,6 +214,7 @@ if __name__ == "__main__":
         open_after_start.start()
 
     print("拾光册 · 藏品管理 → http://127.0.0.1:%d/admin.html" % port)
+    print("管理口令：%s（%s）——管理页首次进入时输入一次" % (password, pass_source))
     if host == "0.0.0.0":
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
