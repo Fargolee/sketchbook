@@ -22,7 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # enablement: 新仓库免去手动到 Settings 里开 Pages，部署时自动启用
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       # the whole repo is the site: one html file plus sketchbook/
       - uses: actions/upload-pages-artifact@v3
         with:
