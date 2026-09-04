@@ -393,10 +393,18 @@ saveBtn.onclick=async()=>{
       if(s.dirty&&s.blob)p.png=await blobB64(s.blob);
       pages.push(p);
     }
-    const r=await fetch('/api/pages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
+    const send=(pass)=>fetch('/api/pages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Admin-Token':pass||''},
       body:JSON.stringify({pages})
     });
+    let r=await send(localStorage.getItem('sb-pass'));
+    if(r.status===401){                 /* 服务设了口令：问一次，记住后重试 */
+      const pass=prompt('这个服务设置了管理口令，请输入：');
+      if(pass===null)throw new Error('需要管理口令');
+      localStorage.setItem('sb-pass',pass);
+      r=await send(pass);
+    }
     const d=await r.json();
     if(d.error)throw new Error(d.error);
     const prev=slots;

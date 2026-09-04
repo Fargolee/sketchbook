@@ -28,13 +28,17 @@
 
 ## 本地运行
 
-用任意静态文件服务器起一个目录，然后打开本地地址：
+最省事：双击根目录的 **`启动相册.bat`**——自动启动服务并打开浏览器，也可以带参数（如 `启动相册.bat --lan --password 口令`）。
+
+等价命令行（用任意静态文件服务器起一个目录，然后打开本地地址）：
 
 ```sh
-python3 -m http.server 4173
+python tools/admin.py            # 管理服务：相册 + 管理页 + 保存接口
+python tools/admin.py --open     # 启动后自动打开浏览器
+python tools/admin.py --lan      # 局域网可访问，见「远程访问」
 ```
 
-直接双击打开 `index.html` 也可以，只是字体走 http 时加载得更稳。
+直接双击打开 `index.html` 只能看，翻页正常，保存接口和管理页需要上面的服务。
 
 ## 更换藏品图片
 
@@ -45,6 +49,21 @@ python3 -m http.server 4173
 3. **改 `PAGES` 数组**：`index.html` 里集中了全部藏品清单（`file` / `title` / `place`），增删一行即可，目录与页数自动跟随。
 
 图片规格：1760×1240、外围透明的整幅跨页 PNG（左右两页画在一张图里）。比例不同需同步调整 `.sb-book` 的 `aspect-ratio`。
+
+## 远程访问
+
+管理服务默认只监听本机（127.0.0.1），别的设备连不上——管理接口能改能删，不建议裸奔到不可信网络：
+
+```sh
+python tools/admin.py                        # 默认：仅本机
+python tools/admin.py --lan                  # 局域网可访问（手机/其他电脑）
+python tools/admin.py --lan --password 口令   # 局域网 + 写接口需口令
+python tools/admin.py 5000                   # 换端口
+```
+
+`--lan` 启动时会打印局域网访问地址；Windows 首次可能弹防火墙询问，勾选允许，或以管理员执行
+`netsh advfirewall firewall add rule name="sketchbook-admin" dir=in action=allow protocol=TCP localport=4173`。
+设了口令后，管理页写入时会弹窗问一次并记住。公网使用建议走 Tailscale 这类私有隧道，不要直接端口转发裸露。
 
 ## 可访问性与输入
 

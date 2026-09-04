@@ -424,6 +424,9 @@ button{font:inherit}
 
 .foot{font-size:11.5px;letter-spacing:var(--track-caps);text-transform:uppercase;
   color:var(--ink-faint);text-align:center;margin-top:clamp(48px,7vh,84px);padding-bottom:44px}
+.foot a{color:inherit;border-bottom:1px solid var(--hairline);padding-bottom:1px;
+  transition:color .2s,border-color .2s}
+.foot a:hover{color:var(--ink);border-color:currentColor}
 </style>
 </head>
 <body>
@@ -509,7 +512,7 @@ button{font:inherit}
 
   <div class="rule short" aria-hidden="true"></div>
 
-  <p class="foot">拾光册 · 私人收藏 · 2026</p>
+  <p class="foot">拾光册 · 私人收藏 · 2026 · <a href="admin.html">管理</a></p>
 </main>
 
 <script>
@@ -529,7 +532,10 @@ const PAGES=[
   {file:'lau-pa-sat.png', title:'老巴刹', place:'莱佛士坊'},
   {file:'marina-bay-skyline.png', title:'滨海湾天际线', place:'海湾夜色'},
   {file:'singapore-river.png', title:'新加坡河', place:'驳船码头'},
-  {file:'botanic-gardens.png', title:'植物园', place:'东陵'}
+  {file:'botanic-gardens.png', title:'植物园', place:'东陵'},
+  {file:'photo-1788542038865.png', title:'我全都要', place:'AllIn', ratio:'1.0000'},
+  {file:'photo-1788542097590.png', title:'MM', place:'网络', ratio:'1.2496'},
+  {file:'photo-1788542133016.png', title:'人民有信仰', place:'网络', ratio:'1.7780'}
 ];
 PAGES.forEach(p=>p.url=DIR+p.file);
 const M=PAGES.length, LAND=6;
