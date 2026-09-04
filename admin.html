@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>藏品管理 · 拾光册</title>
+<style>
+:root{
+  --paper:#ece7dc;--card:#f7f2e7;--ink:#2b2721;--ink-soft:rgba(43,39,33,.58);
+  --ink-faint:rgba(43,39,33,.36);--hairline:rgba(43,39,33,.14);--earth:#9a6a3e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Newsreader','Noto Serif SC',"Songti SC","STSong","SimSun",Georgia,serif;
+  -webkit-font-smoothing:antialiased}
+header{max-width:1200px;margin:0 auto;padding:34px 24px 8px}
+header .back{font-size:13px;letter-spacing:.08em;color:var(--ink-soft);text-decoration:none}
+header .back:hover{color:var(--ink)}
+h1{font-size:26px;font-weight:400;margin:14px 0 6px}
+header p{margin:0;font-size:14px;line-height:1.7;color:var(--ink-soft);max-width:64ch}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:20px 0 6px}
+.btn{font:inherit;font-size:14px;padding:7px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--hairline);background:rgba(255,252,244,.8);color:var(--ink)}
+.btn:hover{background:#fffdf6}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:disabled{opacity:.4;cursor:default}
+.btn.mini{font-size:12px;padding:4px 10px}
+.reslab{font-size:11px;color:var(--ink-faint);letter-spacing:.08em;
+  display:flex;align-items:center;gap:7px}
+.reslab .mode{width:auto;padding:5px 9px}
+.state{font-size:12.5px;color:var(--ink-faint);letter-spacing:.04em}
+.banner{display:none;max-width:1200px;margin:14px auto 0;padding:12px 18px;border:1px solid var(--hairline);
+  border-radius:10px;background:rgba(158,59,44,.07);color:#7c3a2c;font-size:14px;line-height:1.7}
+.banner.on{display:block;margin-inline:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;
+  max-width:1200px;margin:18px auto 70px;padding:0 24px}
+.card{border:1px solid var(--hairline);border-radius:12px;background:var(--card);padding:13px}
+.thumb{position:relative;aspect-ratio:1760/1240;border-radius:8px;overflow:hidden;cursor:pointer;
+  background:
+    linear-gradient(45deg,rgba(43,39,33,.05) 25%,transparent 25% 75%,rgba(43,39,33,.05) 75%),
+    linear-gradient(45deg,rgba(43,39,33,.05) 25%,transparent 25% 75%,rgba(43,39,33,.05) 75%);
+  background-size:22px 22px;background-position:0 0,11px 11px;
+  outline:1px dashed var(--hairline);outline-offset:-6px}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.thumb.drop{outline:2px dashed var(--earth);background-color:rgba(154,106,62,.08)}
+.thumb .tip{position:absolute;left:0;right:0;bottom:0;text-align:center;font-size:12px;
+  color:var(--ink-faint);padding:6px;background:rgba(247,242,231,.82)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.fields label{font-size:11px;color:var(--ink-faint);letter-spacing:.08em;display:block;margin-bottom:3px}
+.fields input,.mode{width:100%;font:inherit;font-size:14px;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--hairline);background:#fffdf6;color:var(--ink)}
+.fields input:focus,.mode:focus{outline:1px solid rgba(154,106,62,.5)}
+.modewrap{margin-top:11px}
+.modewrap label{font-size:11px;color:var(--ink-faint);letter-spacing:.08em;display:block;margin-bottom:3px}
+.row{display:flex;align-items:center;gap:6px;margin-top:11px}
+.fname{font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em;margin-right:auto;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46%}
+.card.dirty{border-color:rgba(154,106,62,.55)}
+.card.dirty .fname:after{content:" · 未保存";color:var(--earth)}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:var(--paper);font-size:13.5px;padding:10px 20px;border-radius:999px;
+  opacity:0;transition:.3s ease;pointer-events:none;max-width:82vw}
+#toast.on{transform:translateX(-50%);opacity:1}
+footer{max-width:1200px;margin:0 auto;padding:0 24px 60px;font-size:12.5px;color:var(--ink-faint);line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="/">← 返回册子</a>
+  <h1>藏品管理</h1>
+  <p>把照片拖到卡片上（或点卡片选图），填上题名与出处，点「写入仓库」——新图与目录会直接写回 sketchbook/ 和 index.html。照片支持 JPG / PNG / WebP，存为整幅册页 PNG，输出分辨率在下方选择。</p>
+  <div class="bar">
+    <label class="reslab">输出分辨率
+      <select id="resSel" class="mode">
+        <option value="std">标准 · 1760×1240</option>
+        <option value="hi">高清 · 3520×2480</option>
+        <option value="uhd">超清 · 5280×3720</option>
+      </select>
+    </label>
+    <span class="state" id="state">读取中…</span>
+    <button class="btn" id="addBtn" type="button">＋ 新增一页</button>
+    <button class="btn primary" id="saveBtn" type="button" disabled>写入仓库</button>
+  </div>
+</header>
+<div class="banner" id="banner">
+  这个页面需要保存接口：请改用 <b>python tools/admin.py</b> 启动本地服务（地址不变，还是 4173 端口），
+  再刷新本页。只跑 python -m http.server 时只能看，不能存。
+</div>
+<div class="grid" id="grid"></div>
+<footer>
+  五种入册方式：「照片铺满纸面」最常用，但会裁掉放不下的部分（竖图裁得最多）；竖图选「照片完整放入 ·
+  周围留白」，整张照片等比缩小贴在册子上；想不留白、整页都是照片，选「照片整页 · 自适应不留白」——
+  册页比例会跟着照片走，翻开时整页铺满；「右页照片 · 左页题字」自动在左页竖排题字并盖印；
+  「原图整幅」适合你自己做好了的整幅画稿。
+  文件名自动生成，无需填写。输出分辨率只作用于新合成的卡片；本次会话里上传过原图的卡片会按
+  新分辨率重新合成，之前已保存的旧页想升级清晰度，重新拖一次原图再写入即可。
+</footer>
+<div id="toast"></div>
+
+<script>
+/* ============ 数据 ============ */
+let W=1760,H=1240,PG=null;     /* 输出分辨率；PG 是纸面在画布里的区域 */
+function setRes(key){
+  const m={std:[1760,1240],hi:[3520,2480],uhd:[5280,3720]}[key]||[1760,1240];
+  W=m[0];H=m[1];
+  PG={x0:W*.051, x1:W*.949, y0:H*.218, y1:H*.782};
+}
+setRes(localStorage.getItem('sb-res')||'hi');
+let slots=[];          /* {file,title,place,mode, srcFile,bitmap, blob,dirty} */
+let listDirty=false;   /* 增、删、排序这类不动单张卡片的结构变化 */
+
+const grid=document.getElementById('grid');
+const stateEl=document.getElementById('state');
+const saveBtn=document.getElementById('saveBtn');
+const banner=document.getElementById('banner');
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600);
+}
+async function load(){
+  try{
+    const r=await fetch('/api/pages',{cache:'no-store'});
+    const d=await r.json();
+    if(d.error)throw new Error(d.error);
+    slots=d.pages.map(p=>({file:p.file,title:p.title,place:p.place,mode:'full',
+      bitmap:null,blob:null,dirty:false,thumb:p.file,ratio:p.ratio||null}));
+    banner.classList.remove('on');
+    stateEl.textContent='已连上本地服务，共 '+slots.length+' 页';
+  }catch(e){
+    banner.classList.add('on');
+    stateEl.textContent='未连接';
+    slots=[];
+  }
+  draw();
+}
+
+/* ============ 画面合成 ============ */
+function cover(ctx,bmp,dx,dy,dw,dh){
+  const s=Math.max(dw/bmp.width,dh/bmp.height);
+  const sw=dw/s, sh=dh/s;
+  ctx.drawImage(bmp,(bmp.width-sw)/2,(bmp.height-sh)/2,sw,sh,dx,dy,dw,dh);
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function paper(ctx){
+  const k=W/1760;   /* 装饰尺寸随分辨率等比缩放 */
+  ctx.clearRect(0,0,W,H);
+  const g=ctx.createLinearGradient(0,PG.y0,0,PG.y1);
+  g.addColorStop(0,'#fdfaf2');g.addColorStop(1,'#f4eddc');
+  for(const [x,w] of [[PG.x0,PG.x1- W/2 - PG.x0],[W/2,PG.x1-W/2]]){
+    roundRect(ctx,x,PG.y0,w,PG.y1-PG.y0,10*k);
+    ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='rgba(43,39,33,.12)';ctx.lineWidth=1.5*k;ctx.stroke();
+  }
+  /* 外侧的书脊叠纸线 */
+  ctx.strokeStyle='rgba(43,39,33,.08)';
+  for(const off of [4*k,8*k]){
+    ctx.beginPath();ctx.moveTo(PG.x0-off,PG.y0+10*k);ctx.lineTo(PG.x0-off,PG.y1-10*k);
+    ctx.moveTo(PG.x1+off,PG.y0+10*k);ctx.lineTo(PG.x1+off,PG.y1-10*k);ctx.stroke();
+  }
+}
+function gutter(ctx){
+  const k=W/1760;
+  const g=ctx.createLinearGradient(W/2-80*k,0,W/2+80*k,0);
+  g.addColorStop(0,'rgba(88,66,36,0)');g.addColorStop(.5,'rgba(88,66,36,.20)');g.addColorStop(1,'rgba(88,66,36,0)');
+  ctx.fillStyle=g;ctx.fillRect(W/2-80*k,PG.y0,160*k,PG.y1-PG.y0);
+}
+function seal(ctx,x,y){
+  const k=W/1760;
+  ctx.fillStyle='#9e3b2c';
+  roundRect(ctx,x,y,58*k,58*k,7*k);ctx.fill();
+  ctx.fillStyle='#f6ead9';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font=26*k+'px KaiTi,"STKaiti",serif';
+  ctx.fillText('拾',x+29*k,y+17*k);ctx.fillText('光',x+29*k,y+43*k);
+}
+function captionLeft(ctx,text){
+  /* 左页竖排题字，从右往左换列 */
+  const k=W/1760;
+  const size=58*k, lh=size*1.16, colH=PG.y1-PG.y0-150*k;
+  const perCol=Math.max(2,Math.floor(colH/lh));
+  ctx.fillStyle='#4a4238';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.font=size+'px KaiTi,"STKaiti",serif';
+  const chars=[...text];
+  for(let i=0;i<chars.length;i++){
+    const col=Math.floor(i/perCol), row=i%perCol;
+    const x=W/2-96*k-col*(size+34*k), y=PG.y0+74*k+row*lh;
+    ctx.fillText(chars[i],x,y);
+  }
+  const cols=Math.ceil(chars.length/perCol);
+  seal(ctx, W/2-96*k-(cols)*(size+34*k)-58*k+(size+34*k-58*k)/2, PG.y1-74*k-58*k);
+}
+function containRect(bw,bh,dx,dy,dw,dh,pad){
+  /* 等比缩小到完整放进目标框，四周留白 */
+  const aw=Math.max(10,dw-pad*2), ah=Math.max(10,dh-pad*2);
+  const s=Math.min(aw/bw,ah/bh);
+  const w=bw*s,h=bh*s;
+  return {x:dx+(dw-w)/2, y:dy+(dh-h)/2, w:w, h:h};
+}
+async function compose(slot){
+  /* 「照片整页」的画布比例随照片走（面积与当前输出档位对齐），其余模式用固定档位 */
+  let cw=W,ch=H;
+  if(slot.mode==='page'&&slot.bitmap){
+    const area=W*H, ar=slot.bitmap.width/slot.bitmap.height;
+    if(ar>=1){ch=Math.round(Math.sqrt(area/ar));cw=Math.round(ch*ar);}
+    else{cw=Math.round(Math.sqrt(area*ar));ch=Math.round(cw/ar);}
+  }
+  const cv=document.createElement('canvas');cv.width=cw;cv.height=ch;
+  const ctx=cv.getContext('2d');
+  if(!slot.bitmap)return cv;
+  if(slot.mode==='spread'){ cover(ctx,slot.bitmap,0,0,cw,ch); }
+  else if(slot.mode==='page'){
+    /* 比例与照片一致：等比即铺满，无裁剪、无留白，照片就是整页 */
+    ctx.drawImage(slot.bitmap,0,0,cw,ch);
+    const hw=cw*0.045;                    /* 中缝一道淡影，像印在摊开的册子上 */
+    const g=ctx.createLinearGradient(cw/2-hw,0,cw/2+hw,0);
+    g.addColorStop(0,'rgba(88,66,36,0)');g.addColorStop(.5,'rgba(88,66,36,.16)');g.addColorStop(1,'rgba(88,66,36,0)');
+    ctx.fillStyle=g;ctx.fillRect(cw/2-hw,0,hw*2,ch);
+  }
+  else if(slot.mode==='full'){
+    paper(ctx);
+    cover(ctx,slot.bitmap,PG.x0,PG.y0,PG.x1-PG.x0,PG.y1-PG.y0);
+    gutter(ctx);
+  }else if(slot.mode==='fit'){ /* 完整放入：整张照片贴在摊开的册子上，不裁剪 */
+    paper(ctx);
+    gutter(ctx);
+    const k=W/1760;
+    const r=containRect(slot.bitmap.width,slot.bitmap.height,
+      PG.x0,PG.y0,PG.x1-PG.x0,PG.y1-PG.y0,(PG.y1-PG.y0)*0.06);
+    ctx.save();                          /* 相纸的白边和投影 */
+    ctx.shadowColor='rgba(58,44,26,.30)';ctx.shadowBlur=18*k;ctx.shadowOffsetY=6*k;
+    ctx.fillStyle='#fffdf8';
+    const matte=12*k;
+    ctx.fillRect(r.x-matte,r.y-matte,r.w+matte*2,r.h+matte*2);
+    ctx.restore();
+    ctx.drawImage(slot.bitmap,0,0,slot.bitmap.width,slot.bitmap.height,r.x,r.y,r.w,r.h);
+    ctx.strokeStyle='rgba(43,39,33,.18)';ctx.lineWidth=1*k;
+    ctx.strokeRect(r.x-.5,r.y-.5,r.w+1,r.h+1);
+  }else{ /* right：右页照片，左页题字 */
+    paper(ctx);
+    const inset=20*(W/1760);
+    cover(ctx,slot.bitmap,W/2+inset,PG.y0+inset,PG.x1-W/2-inset*2,PG.y1-PG.y0-inset*2);
+    ctx.strokeStyle='rgba(43,39,33,.16)';ctx.lineWidth=2*(W/1760);
+    ctx.strokeRect(W/2+inset,PG.y0+inset,PG.x1-W/2-inset*2,PG.y1-PG.y0-inset*2);
+    captionLeft(ctx,slot.title||'无题');
+    gutter(ctx);
+  }
+  return cv;
+}
+function cvBlob(cv){return new Promise(r=>cv.toBlob(r,'image/png'));}
+
+/* ============ 界面 ============ */
+function el(t,c){const e=document.createElement(t);if(c)e.className=c;return e}
+function anyDirty(){return listDirty||slots.some(s=>s.dirty);}
+function draw(){
+  grid.textContent='';
+  slots.forEach((s,i)=>grid.appendChild(card(s,i)));
+  saveBtn.disabled=!anyDirty();
+  stateEl.textContent='共 '+slots.length+' 页 · '+
+    (anyDirty()?'有未保存的改动':'暂无改动');
+}
+function card(s,i){
+  const c=el('div','card'+(s.dirty?' dirty':''));
+  const th=el('div','thumb');
+  const img=new Image();
+  if(s.blob)img.src=URL.createObjectURL(s.blob);
+  else if(s.thumb)img.src='sketchbook/'+encodeURIComponent(s.thumb);
+  th.appendChild(img);
+  if(!s.blob&&!s.thumb){          /* 新页还没图：先空着，别按文件名去捞旧图 */
+    const tip=el('div','tip');tip.textContent='点选或拖入图片';th.appendChild(tip);
+  }
+  th.onclick=()=>pick.click();
+  th.ondragover=e=>{e.preventDefault();th.classList.add('drop')};
+  th.ondragleave=()=>th.classList.remove('drop');
+  th.ondrop=e=>{e.preventDefault();th.classList.remove('drop');take(i,e.dataTransfer.files[0])};
+  c.appendChild(th);
+  const pick=el('input');pick.type='file';pick.accept='image/*';pick.hidden=true;
+  pick.onchange=()=>{take(i,pick.files[0]);pick.value='';};
+  c.appendChild(pick);
+
+  const mw=el('div','modewrap');
+  mw.appendChild(Object.assign(el('label'),{textContent:'入册方式'}));
+  const mode=el('select','mode');
+  for(const [v,t] of [['full','照片铺满纸面'],['page','照片整页 · 自适应不留白'],['fit','照片完整放入 · 周围留白'],['right','右页照片 · 左页题字'],['spread','原图整幅（自制画稿）']])
+    mode.appendChild(new Option(t,v));
+  mode.value=s.mode;
+  mode.onchange=async()=>{s.mode=mode.value;await reprocess(i);};
+  mw.appendChild(mode);c.appendChild(mw);
+
+  const f=el('div','fields');
+  const mk=(txt,key,ph)=>{
+    const box=el('div');
+    box.appendChild(Object.assign(el('label'),{textContent:txt}));
+    const inp=el('input');inp.value=s[key]||'';inp.placeholder=ph;
+    inp.oninput=()=>{
+    s[key]=inp.value;
+    if(key==='title'&&s.mode==='right'){
+      clearTimeout(s._t);s._t=setTimeout(()=>reprocess(i),350);
+    }
+    mark(i);
+  };
+    box.appendChild(inp);return box;
+  };
+  f.appendChild(mk('题名','title','如：老街的下午'));
+  f.appendChild(mk('出处 / 备注','place','如：二〇二五年·大理'));
+  c.appendChild(f);
+
+  const row=el('div','row');
+  const name=el('span','fname');name.textContent=s.file;row.appendChild(name);
+  const mv=async d=>{
+    const j=i+d;if(j<0||j>=slots.length)return;
+    [slots[i],slots[j]]=[slots[j],slots[i]];listDirty=true;draw();
+  };
+  const bU=el('button','btn mini');bU.textContent='上移';bU.onclick=()=>mv(-1);
+  const bD=el('button','btn mini');bD.textContent='下移';bD.onclick=()=>mv(1);
+  const bX=el('button','btn mini');bX.textContent='删除';
+  bX.onclick=()=>{
+    if(!confirm('删掉「'+(s.title||s.file)+'」这一页？写入仓库后才会生效。'))return;
+    slots.splice(i,1);listDirty=true;draw();
+  };
+  row.append(bU,bD,bX);c.appendChild(row);
+  return c;
+}
+/* 单卡片的轻量同步：打字、换图时不重建整页，免得输入框失焦跳屏 */
+function syncCardState(i){
+  const c=grid.children[i];
+  if(c)c.classList.toggle('dirty',slots[i].dirty);
+  saveBtn.disabled=!anyDirty();
+  stateEl.textContent='共 '+slots.length+' 页 · '+
+    (anyDirty()?'有未保存的改动':'暂无改动');
+}
+function mark(i){slots[i].dirty=true;syncCardState(i);}
+async function take(i,file){
+  if(!file)return;
+  if(!/^image\//.test(file.type)){toast('只收图片文件（JPG / PNG / WebP）');return;}
+  try{
+    slots[i].bitmap=await createImageBitmap(file);
+    slots[i].srcFile=file;
+    await reprocess(i);
+  }catch(e){toast('这张图解不开，换一张试试');}
+}
+async function ensureBitmap(s){
+  if(s.bitmap)return true;
+  if(!s.thumb)return false;        /* 还没图的空页 */
+  try{                             /* 从盘上把已保存的册页取回来当底图 */
+    const r=await fetch('sketchbook/'+encodeURIComponent(s.thumb));
+    if(!r.ok)return false;
+    s.bitmap=await createImageBitmap(await r.blob());
+    return true;
+  }catch(e){return false;}
+}
+async function reprocess(i){
+  const s=slots[i];
+  if(!await ensureBitmap(s)){toast('这张卡还没有图片，先拖一张上来');return;}
+  const cv=await compose(s);
+  s.blob=await cvBlob(cv);
+  s.ratio=cv.width/cv.height;
+  s.dirty=true;
+  const c=grid.children[i];          /* 原位换缩略图，不动输入框 */
+  if(c){
+    const img=c.querySelector('.thumb img');
+    if(img)img.src=URL.createObjectURL(s.blob);
+  }
+  syncCardState(i);
+}
+
+/* ============ 保存 ============ */
+function freshName(){return 'photo-'+Date.now()+'.png';}   /* 时间戳命名，永不撞上盘上的旧图 */
+document.getElementById('addBtn').onclick=()=>{
+  slots.push({file:freshName(),title:'新藏品',place:'',mode:'full',
+    bitmap:null,blob:null,dirty:true,thumb:''});
+  listDirty=true;
+  draw();
+  grid.lastElementChild.scrollIntoView({behavior:'smooth',block:'center'});
+};
+async function blobB64(blob){
+  const buf=await blob.arrayBuffer();
+  let bin='';const u=new Uint8Array(buf);
+  for(let i=0;i<u.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));
+  return btoa(bin);
+}
+saveBtn.onclick=async()=>{
+  saveBtn.disabled=true;stateEl.textContent='正在写入…';
+  try{
+    const pages=[];
+    for(const s of slots){
+      const p={file:s.file,title:s.title||'',place:s.place||''};
+      if(s.ratio)p.ratio=(+s.ratio).toFixed(4);
+      if(s.dirty&&s.blob)p.png=await blobB64(s.blob);
+      pages.push(p);
+    }
+    const r=await fetch('/api/pages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({pages})
+    });
+    const d=await r.json();
+    if(d.error)throw new Error(d.error);
+    const prev=slots;
+    slots=d.pages.map((p,i)=>{
+      const o=prev[i];
+      const s={file:p.file,title:p.title,place:p.place,mode:'full',
+        bitmap:null,blob:null,dirty:false,thumb:p.file,ratio:p.ratio?parseFloat(p.ratio):null};
+      if(o&&o.file===s.file){s.bitmap=o.bitmap;s.blob=o.blob;}  /* 原图接回去，换入册方式仍从原图合成 */
+      return s;
+    });
+    listDirty=false;
+    draw();
+    toast('已写入 sketchbook/ 与 index.html，去册子页刷新即可看到');
+  }catch(e){
+    toast('保存失败：'+e.message);draw();
+  }
+};
+const resSel=document.getElementById('resSel');
+resSel.value=localStorage.getItem('sb-res')||'hi';
+resSel.onchange=async()=>{
+  setRes(resSel.value);
+  localStorage.setItem('sb-res',resSel.value);
+  let n=0;
+  for(let i=0;i<slots.length;i++)if(slots[i].bitmap){await reprocess(i);n++;}
+  toast(n?('已按 '+W+'×'+H+' 重新合成 '+n+' 张，写入仓库即生效')
+        :('新上传的照片将按 '+W+'×'+H+' 合成'));
+};
+load();
+</script>
+</body>
+</html>

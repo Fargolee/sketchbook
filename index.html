@@ -1,10 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meng To</title>
-<meta name="description" content="designer, creator, AI educator — Singapore">
+<title>拾光册 · 私人收藏相册</title>
+<meta name="description" content="一本私人收藏相册：九件藏品，各记一处风景。可以翻页，也可以拿放大镜细看。">
+<meta name="theme-color" content="#ece7dc">
+<!-- 中文用思源宋体。不挡首屏：先按 print 媒介低优先级取，到手再挂上去。
+     取不到也无妨——回退栈里是各系统自带的宋体，版面照样成立。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" media="print" onload="this.media='all'">
+<noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap">
+</noscript>
 <style>
 @font-face{font-family:'Instrument Serif';font-style:normal;font-weight:400;font-display:block;
   src:url(sketchbook/instrument-serif.woff2) format('woff2')}
@@ -20,8 +29,8 @@
   --ink-faint:rgba(43,39,33,.36);
   --hairline:rgba(43,39,33,.14);
   --earth:#9a6a3e;
-  --display:'Instrument Serif',"New York",Georgia,'Times New Roman',serif;
-  --font:'Newsreader',"New York",Georgia,'Times New Roman',serif;
+  --display:'Instrument Serif','Noto Serif SC',"Songti SC","STSong","SimSun","New York",Georgia,serif;
+  --font:'Newsreader','Noto Serif SC',"Songti SC","STSong","SimSun","New York",Georgia,serif;
   --track-caps:.24em;
   --track-nav:.06em;
 }
@@ -35,6 +44,11 @@ body{
 a{color:inherit;text-decoration:none}
 button{font:inherit}
 ::selection{background:rgba(43,39,33,.85);color:var(--paper)}
+
+/* 跳到目录：键盘用户的捷径，平时藏在页外 */
+.skip{position:fixed;left:16px;top:-56px;z-index:600;padding:9px 16px;border-radius:999px;
+  background:var(--ink);color:var(--paper);font-size:13px;letter-spacing:.08em;transition:top .2s ease}
+.skip:focus{top:14px}
 
 /* the painted ground the whole page sits on */
 .wash{
@@ -71,20 +85,10 @@ button{font:inherit}
 }
 .top nav a{color:var(--ink-soft);transition:color .2s}
 .top nav a:hover,.top nav a[aria-current]{color:var(--ink)}
-.top nav .top-socials{
-  display:flex;align-items:center;gap:13px;margin-left:2px;padding-left:clamp(12px,1.6vw,20px);
-  border-left:1px solid var(--hairline);
-}
-.icon-btn{display:inline-flex;align-items:center;justify-content:center;padding:4px;color:var(--ink-soft);transition:color .2s}
-.icon-btn:hover{color:var(--ink)}
-.top .icon-btn svg{width:16px;height:16px;display:block}
 @media (max-width:640px){
   .top{padding-inline:12px;padding-block:13px 50px;gap:8px}
   .top .name{font-size:20px}
   .top nav{gap:11px;font-size:13px}
-  .top nav .top-socials{gap:9px;padding-left:10px}
-  .top .icon-btn{padding:2px}
-  .top .icon-btn svg{width:14px;height:14px}
 }
 
 /* ---------------- hero ---------------- */
@@ -175,7 +179,7 @@ button{font:inherit}
 .sb-half{position:absolute;top:0;bottom:0;width:50%;overflow-x:clip;overflow-y:visible}
 .sb-half.left{left:0}
 .sb-half.right{left:50%}
-.sb-half-img{width:200%;max-width:none;height:auto;display:block}
+.sb-half-img{width:200%;max-width:none;height:100%;object-fit:cover;display:block}
 .sb-half-img.right{margin-left:-100%}
 /* the shadow the lifting leaf throws onto the page beneath it */
 .gutter-shade{
@@ -395,23 +399,16 @@ button{font:inherit}
   display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,5vw,60px);align-items:start;
 }
 .bio{font-size:clamp(17px,1.7vw,20px);line-height:1.74;letter-spacing:.005em;margin:0;font-weight:300;max-width:56ch}
-.bio-link{color:var(--ink);text-decoration:underline;text-decoration-color:rgba(43,39,33,.28);
-  text-underline-offset:4px;transition:text-decoration-color .2s}
-.bio-link:hover{text-decoration-color:var(--ink)}
+.about .bio + .bio{margin-top:1.1em}
 .bloom{width:clamp(150px,17vw,260px);opacity:.9;user-select:none;align-self:center}
 @media (max-width:760px){
   .about{grid-template-columns:1fr}
   .bloom{width:170px;justify-self:center}
 }
 
-.contact{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
-.contact-social{
-  margin:20px 0 0;display:flex;flex-wrap:wrap;gap:22px;
-  font-size:12px;letter-spacing:var(--track-caps);text-transform:uppercase;
-}
-.about .bio + .bio{margin-top:1.1em}
-
 .plates{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+.index-lede{font-size:clamp(15px,1.4vw,17px);line-height:1.7;font-weight:300;
+  color:var(--ink-soft);margin:0 0 22px;max-width:52ch}
 .plate-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--hairline)}
 .plate{
   display:grid;grid-template-columns:3.4em minmax(0,1fr) auto;gap:18px;align-items:baseline;
@@ -430,29 +427,24 @@ button{font:inherit}
 </style>
 </head>
 <body>
+<a class="skip" href="#index">跳到目录</a>
 <div class="wash" aria-hidden="true"></div>
-<main class="page home">
+<main class="page home" id="top">
 
   <header class="top">
-    <a class="name" href="#">Meng To</a>
-    <nav>
-      <a href="#plates">Journal</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <div class="top-socials">
-        <a href="https://x.com/MengTo" target="_blank" rel="me noopener" class="icon-btn" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.7 2.6h3.3l-7.2 8.2 8.5 11.2h-6.7l-5.2-6.9-6 6.9H1.1l7.7-8.8L.7 2.6h6.9l4.7 6.3 5.4-6.3Zm-1.2 17.5h1.8L7.6 4.4H5.7l10.8 15.7Z"/></svg></a>
-        <a href="https://www.linkedin.com/in/mengto" target="_blank" rel="me noopener" class="icon-btn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.9 3.5a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2ZM3.1 9.3h3.6v11.6H3.1V9.3Zm6 0h3.4v1.6h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.45h-3.6v-5.72c0-1.36-.02-3.12-1.92-3.12-1.92 0-2.22 1.48-2.22 3.02v5.82H9.1V9.3Z"/></svg></a>
-        <a href="https://www.instagram.com/mengto" target="_blank" rel="me noopener" class="icon-btn" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.15" fill="currentColor" stroke="none"/></svg></a>
-        <a href="mailto:meng@designcode.io" class="icon-btn" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2.4" y="4.6" width="19.2" height="14.8" rx="2.4"/><path d="m3.2 6.4 8.8 6.6 8.8-6.6"/></svg></a>
-      </div>
+    <a class="name" href="#top">拾光册</a>
+    <nav aria-label="主导航">
+      <a href="#book">册页</a>
+      <a href="#index">目录</a>
+      <a href="#colophon">关于</a>
     </nav>
   </header>
 
-  <section id="sketchbook" class="hero">
+  <section id="book" class="hero">
     <img class="botany l" src="sketchbook/botany-left.png" alt="" aria-hidden="true">
     <img class="botany r" src="sketchbook/botany-right.png" alt="" aria-hidden="true">
 
-    <p class="hero-kicker">Designer / Creator / AI Educator / Founder @ Singapore</p>
+    <p class="hero-kicker">私人收藏相册 <span aria-hidden="true">/</span> 九件藏品，各记一段时光</p>
 
     <div class="sb-wrap" id="sbWrap">
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -460,7 +452,7 @@ button{font:inherit}
         <filter id="sb-mblur-2"><feGaussianBlur stdDeviation="14 0"/></filter>
       </svg>
       <div class="sb-stage" id="sbStage">
-        <button class="sb-arrow left" id="sbLeft" aria-label="previous page">
+        <button class="sb-arrow left" id="sbLeft" aria-label="上一页">
           <svg viewBox="0 0 14 44" width="14" height="44" fill="none" aria-hidden="true"><polyline points="11,3 3,22 11,41" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="sb-3d" id="sb3d">
@@ -473,22 +465,22 @@ button{font:inherit}
           <div class="zoomwrap" id="zoomWrap" aria-hidden="true"><div class="zoominner" id="zoomInner"></div></div>
           <div class="loupe" id="loupe"><span class="grip"></span><span class="ring"><span class="lens" id="loupeLens"><span class="mag" id="loupeMag"></span></span></span></div>
         </div>
-        <button class="sb-arrow right" id="sbRight" aria-label="next page">
+        <button class="sb-arrow right" id="sbRight" aria-label="下一页">
           <svg viewBox="0 0 14 44" width="14" height="44" fill="none" aria-hidden="true"><polyline points="3,3 11,22 3,41" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
       <div class="sb-captions" id="sbCaptions"></div>
-      <div class="sb-tools" role="group" aria-label="view controls">
-        <button class="tool" id="zOut" aria-label="zoom out"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.6" cy="8.6" r="5.6"/><path d="M12.8 12.8 17.4 17.4M6.2 8.6h4.8"/></svg></button>
+      <div class="sb-tools" role="group" aria-label="视图控制">
+        <button class="tool" id="zOut" aria-label="缩小"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.6" cy="8.6" r="5.6"/><path d="M12.8 12.8 17.4 17.4M6.2 8.6h4.8"/></svg></button>
         <span class="zoom-read" id="zRead">100%</span>
-        <button class="tool" id="zIn" aria-label="zoom in"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.6" cy="8.6" r="5.6"/><path d="M12.8 12.8 17.4 17.4M6.2 8.6h4.8M8.6 6.2v4.8"/></svg></button>
+        <button class="tool" id="zIn" aria-label="放大"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.6" cy="8.6" r="5.6"/><path d="M12.8 12.8 17.4 17.4M6.2 8.6h4.8M8.6 6.2v4.8"/></svg></button>
         <span class="tool-sep" aria-hidden="true"></span>
-        <button class="tool" id="loupeBtn" aria-label="magnifier" aria-pressed="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.8" cy="8.8" r="5.8"/><path d="M13 13l4.4 4.4"/><path d="M6.4 7.2a3.2 3.2 0 0 1 2.4-1.4" opacity=".55"/></svg></button>
+        <button class="tool" id="loupeBtn" aria-label="放大镜" aria-pressed="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8.8" cy="8.8" r="5.8"/><path d="M13 13l4.4 4.4"/><path d="M6.4 7.2a3.2 3.2 0 0 1 2.4-1.4" opacity=".55"/></svg></button>
       </div>
-      <p class="sb-hint" id="sbHint">Drag the page to turn · Drag the glass across it</p>
+      <p class="sb-hint" id="sbHint">拖动页面翻页 · 拖动放大镜细看</p>
     </div>
 
-    <button class="hero-down" id="heroDown" aria-label="scroll to about">
+    <button class="hero-down" id="heroDown" aria-label="向下看目录">
       <svg viewBox="0 0 44 22" width="34" height="17" fill="none" aria-hidden="true">
         <polyline points="3,3 22,11 41,3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
         <polyline points="3,11 22,19 41,11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -498,57 +490,46 @@ button{font:inherit}
 
   <div class="rule" aria-hidden="true"></div>
 
-  <section id="about" class="about">
+  <section id="colophon" class="about">
     <div>
-      <p class="section-label">About</p>
-      <p class="bio">Meng To is a designer and teacher in Singapore. He founded <a class="bio-link" href="https://designcode.io" target="_blank" rel="noopener">Design+Code</a>, where he teaches designers code and developers design, and builds <a class="bio-link" href="https://aura.build" target="_blank" rel="noopener">Aura</a> and <a class="bio-link" href="https://dreamcut.ai" target="_blank" rel="noopener">DreamCut</a>.</p>
-      <p class="bio">This sketchbook is the slower half of that. The city looked at properly, in ink and a little colour: shophouse shutters, hawker tents, the bay at dusk.</p>
+      <p class="section-label">关于</p>
+      <p class="bio">这是一本私人收藏相册。册中收的是纸上的城市：屋檐、灯影、水色，以及散步途中让人停下脚步的角落。一页一景，皆是闲暇时攒下的收藏。</p>
+      <p class="bio">册页画作为 AI 生成的钢笔淡彩稿，并非照片；藏品名称与所在地点为实。</p>
     </div>
     <img class="bloom" src="sketchbook/bloom.png" alt="" aria-hidden="true">
   </section>
 
   <div class="rule short" aria-hidden="true"></div>
 
-  <section id="plates" class="plates">
-    <p class="section-label">Plates</p>
+  <section id="index" class="plates">
+    <p class="section-label">目录</p>
+    <p class="index-lede">按入册先后排列。点开任意一件，册子会翻到那一页。</p>
     <ol class="plate-list" id="plateList"></ol>
   </section>
 
   <div class="rule short" aria-hidden="true"></div>
 
-  <section id="contact" class="contact">
-    <p class="section-label">Contact</p>
-    <p class="bio">Write to me at <a class="bio-link" href="mailto:meng@designcode.io">meng@designcode.io</a>. I read everything, and I answer most of it.</p>
-    <p class="contact-social">
-      <a class="bio-link" href="https://x.com/MengTo" target="_blank" rel="me noopener">X</a>
-      <a class="bio-link" href="https://www.linkedin.com/in/mengto" target="_blank" rel="me noopener">LinkedIn</a>
-      <a class="bio-link" href="https://www.instagram.com/mengto" target="_blank" rel="me noopener">Instagram</a>
-    </p>
-  </section>
-
-  <p class="foot">Singapore · Sketchbook</p>
+  <p class="foot">拾光册 · 私人收藏 · 2026</p>
 </main>
 
 <script>
 /* =====================================================================
-   Meng To — sketchbook hero.
-   Spreads are transparent PNGs of an open sketchbook generated with
-   Higgsfield.  The leaf that turns is a real curved surface: a chain of
-   nested strips whose tangent sweeps through an arc, so the page bends
-   the way paper bends instead of pivoting like a flat door.
+   拾光册 — 翻页相册。
+   册页是摊开的透明 PNG 画稿。翻动的那一叶不是绕铰链转的门板，而是一条
+   嵌套纸条链，切线沿弧扫过，所以纸是弯着翻过去的，像真的纸那样。
    ===================================================================== */
 const Q=new URLSearchParams(location.search);
 const DIR='sketchbook/';
 const PAGES=[
-  {file:'marina-bay-sands.png',   title:'Marina Bay Sands',          place:'Bayfront'},
-  {file:'gardens-by-the-bay.png', title:'Gardens by the Bay',        place:'Supertree Grove'},
-  {file:'merlion.png',            title:'The Merlion',               place:'Merlion Park'},
-  {file:'buddha-tooth.png',       title:'Buddha Tooth Relic Temple', place:'Chinatown'},
-  {file:'joo-chiat.png',          title:'Joo Chiat Shophouses',      place:'Katong'},
-  {file:'lau-pa-sat.png',         title:'Lau Pa Sat',                place:'Raffles Quay'},
-  {file:'marina-bay-skyline.png', title:'Marina Bay Skyline',        place:'The Bay'},
-  {file:'singapore-river.png',    title:'Singapore River',           place:'Boat Quay'},
-  {file:'botanic-gardens.png',    title:'Botanic Gardens',           place:'Tanglin'}
+  {file:'marina-bay-sands.png', title:'滨海湾金沙', place:'海湾'},
+  {file:'gardens-by-the-bay.png', title:'滨海湾花园', place:'擎天树丛'},
+  {file:'merlion.png', title:'鱼尾狮', place:'鱼尾狮公园'},
+  {file:'buddha-tooth.png', title:'佛牙寺', place:'牛车水'},
+  {file:'joo-chiat.png', title:'如切店屋', place:'加东'},
+  {file:'lau-pa-sat.png', title:'老巴刹', place:'莱佛士坊'},
+  {file:'marina-bay-skyline.png', title:'滨海湾天际线', place:'海湾夜色'},
+  {file:'singapore-river.png', title:'新加坡河', place:'驳船码头'},
+  {file:'botanic-gardens.png', title:'植物园', place:'东陵'}
 ];
 PAGES.forEach(p=>p.url=DIR+p.file);
 const M=PAGES.length, LAND=6;
@@ -631,6 +612,11 @@ function applyTurn(t){
 }
 function paint(){
   book.textContent='';
+  /* 页面自带 ratio（管理页「照片整页」合成时写入）时，册子的比例随它走 */
+  const cur=turn?turn.to:idx;
+  const pr=cur>=0&&PAGES[cur]&&PAGES[cur].ratio?parseFloat(PAGES[cur].ratio):null;
+  if(pr){book.style.aspectRatio=String(pr);sb3d.style.setProperty('--pg','2%');}
+  else{book.style.aspectRatio='';sb3d.style.setProperty('--pg','21.8%');}
   if(!turn){
     const f=el('div','sb-full');
     const im=new Image();im.src=PAGES[idx].url;im.alt=PAGES[idx].title;
@@ -645,7 +631,7 @@ function paint(){
     applyTurn(turn.t);
   }
   const a=el('button','sb-zone sb-prev'),b=el('button','sb-zone sb-next');
-  a.setAttribute('aria-label','previous page');b.setAttribute('aria-label','next page');
+  a.setAttribute('aria-label','上一页');b.setAttribute('aria-label','下一页');
   book.appendChild(a);book.appendChild(b);
   layout();
   caption();
@@ -675,6 +661,10 @@ function fadeCaption(t){
   capIn.style.opacity=inn.toFixed(3);
 }
 function layout(){
+  /* 竖页比视口还高时，收一收册子宽度，保证一屏能看全 */
+  const lp=PAGES[turn?turn.to:idx];
+  const lr=lp&&lp.ratio?parseFloat(lp.ratio):null;
+  sb3d.style.maxWidth=(lr&&lr<1)?Math.min(900,Math.round(innerHeight*0.78*lr))+'px':'';
   sb3d.style.setProperty('--bw',book.clientWidth+'px');
 }
 addEventListener('resize',layout);
@@ -778,6 +768,7 @@ function hideHint(){hint.classList.add('gone')}
 
 stage.addEventListener('pointerdown',e=>{
   if(e.button!==0)return;
+  if(e.target.closest('.sb-arrow'))return;  /* 箭头自己收 click，别把指针捕获截走 */
   e.preventDefault();                     /* no text selection, no image drag */
   const onBook=e.target.closest('.sb-zone');
   stage.setPointerCapture(e.pointerId);
@@ -858,7 +849,7 @@ addEventListener('keydown',e=>{
   step(e.key==='ArrowRight'?'next':'prev');
 });
 document.getElementById('heroDown').onclick=()=>{
-  document.getElementById('about').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('index').scrollIntoView({behavior:'smooth',block:'start'});
 };
 
 /* --------------------------------------------------- loupe + controls */
@@ -908,9 +899,11 @@ function placeLoupe(){
   if(loupeOn)loupe.classList.add('on');
 
   /* where the paper's edges actually land once the book is scaled */
+  const pgp=PAGES[turn?turn.to:idx];
+  const fr=(pgp&&pgp.ratio)?{x:.015,y:.015}:{x:.051,y:.218};
   const z=view.z, cx=bw/2, cy=bh/2;
-  const x0=cx+(bw*.051-cx)*z, x1=cx+(bw*.949-cx)*z;
-  const y0=cy+(bh*.218-cy)*z, y1=cy+(bh*.782-cy)*z;
+  const x0=cx+(bw*fr.x-cx)*z, x1=cx+(bw*(1-fr.x)-cx)*z;
+  const y0=cy+(bh*fr.y-cy)*z, y1=cy+(bh*(1-fr.y)-cy)*z;
   /* How far the glass's own centre is inside the paper.  The copy fades out
      as it wanders off the sheet, so you are left looking through plain
      glass rather than at a sliver of page on flat desk. */
@@ -997,7 +990,7 @@ PAGES.forEach((p,i)=>{
               '<span class="t"></span><span class="p"></span>';
   b.querySelector('.t').textContent=p.title;
   b.querySelector('.p').textContent=p.place;
-  b.onclick=()=>{goTo(i);document.getElementById('sketchbook').scrollIntoView({behavior:'smooth',block:'center'});};
+  b.onclick=()=>{goTo(i);document.getElementById('book').scrollIntoView({behavior:'smooth',block:'center'});};
   li.appendChild(b);plateList.appendChild(li);
 });
 function marks(){
@@ -1023,7 +1016,7 @@ function riffleStep(){
 }
 function startIntro(){
   const coarse=matchMedia('(max-width: 640px), (pointer: coarse)').matches;
-  if(coarse||REDUCED||Q.has('nointro')){idx=LAND;paint();return;}
+  if(coarse||REDUCED||Q.has('nointro')){idx=Math.min(LAND,M-1);paint();return;}
   const steps=M+LAND;
   riffle=[];
   for(let r=0;r<steps;r++){
